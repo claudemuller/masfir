@@ -9,10 +9,13 @@
 """
 
 try:
-    from tkinter import Tk, Menu, Listbox, Button, END, RIGHT, LEFT, TOP, BOTH, N, W, X
+    from tkinter import Tk, Menu, Listbox, Button, filedialog
+    from tkinter import END, RIGHT, LEFT, TOP, BOTH, N, W, X
 except (ImportError):
-    from Tkinter import Tk, Menu, Listbox, Button, END, RIGHT, LEFT, TOP, BOTH, N, W, X
+    from Tkinter import Tk, Menu, Listbox, Button, tkFileDialog
+    from Tkinter import END, RIGHT, LEFT, TOP, BOTH, N, W, X
 from ttk import Frame, Style
+import os
 
 class Masfir(Frame):
     def __init__(self, parent):
@@ -59,19 +62,18 @@ class Masfir(Frame):
         btnExit = Button(frmButtons, text="Exit", command=self._onBtnExit)
         btnExit.pack(side=TOP, fill=X)
 
-        # TODO get directory from file dialog
-        filesAndFolders = []
+        # Create the listbox
+        self.lstFilesAndFolders = Listbox(self)
 
-        # Create the listbox to hold the directory listing
-        lstFilesAndFolders = Listbox(self)
-        for item in filesAndFolders:
-            lstFilesAndFolders.insert(END, item)
-
-        lstFilesAndFolders.bind("<<ListboxSelect>>", self._onListFilesAndFolders)
-        lstFilesAndFolders.pack(side=LEFT, fill=BOTH, expand=1)
+        self.lstFilesAndFolders.bind("<<ListboxSelect>>", self._onListFilesAndFolders)
+        self.lstFilesAndFolders.pack(side=LEFT, fill=BOTH, expand=1)
 
     def _onBtnLoadDirectory(self):
-        pass
+        selectedDirectory = filedialog.askdirectory()
+
+        # Populate listbox
+        for item in os.listdir(selectedDirectory):
+            self.lstFilesAndFolders.insert(END, item)
 
     def _onBtnExit(self):
         self._exit()
