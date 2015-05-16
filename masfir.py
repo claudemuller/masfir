@@ -10,12 +10,12 @@
 
 try:
     # Try python 3.+ libs
-    from tkinter import Tk, Menu, Listbox, Button, filedialog
-    from tkinter import END, RIGHT, LEFT, TOP, BOTH, N, W, X
+    from tkinter import Tk, Menu, Listbox, Button, filedialog, Label, StringVar
+    from tkinter import END, RIGHT, LEFT, TOP, BOTTOM, BOTH, N, W, E, S, X
 except (ImportError):
     # Or python 2.7+ libs
-    from Tkinter import Tk, Menu, Listbox, Button, tkFileDialog
-    from Tkinter import END, RIGHT, LEFT, TOP, BOTH, N, W, X
+    from Tkinter import Tk, Menu, Listbox, Button, tkFileDialog, Label, StringVar
+    from Tkinter import END, RIGHT, LEFT, TOP, BOTTOM, BOTH, N, W, E, S, X
 from ttk import Frame, Style
 import os
 import dirmuncher
@@ -56,32 +56,59 @@ class Masfir(Frame):
     def _createUIElements(self):
         """ Create the main frame's UI elements """
 
-        frmButtons = Frame(self)
-        frmButtons.pack(side=RIGHT, anchor=N+W)
+        # Top frame with the Load Directory controls
+        frmLoadDir = Frame(self)
+        frmLoadDir.pack(side=TOP, anchor=N, fill=X)
 
-        btnLoadDirectory = Button(frmButtons, text="Load Directory", command=self._onBtnLoadDirectory)
-        btnLoadDirectory.pack(side=TOP, fill=X)
+        self.sLoadDirVar = StringVar()
+        lblLoadDir = Label(frmLoadDir, text="<Empty Directory>", textvariable=self.sLoadDirVar)
+        lblLoadDir.pack(side=LEFT)
 
-        btnExit = Button(frmButtons, text="Exit", command=self._onBtnExit)
-        btnExit.pack(side=TOP, fill=X)
+        btnLoadDir = Button(frmLoadDir, text="Load Directory", command=self._onBtnLoadDir)
+        btnLoadDir.pack(side=RIGHT)
 
-        # Create the listbox
-        self.lstFilesAndFolders = Listbox(self)
+        # Dropdown with list of series (directories) detected
 
-        self.lstFilesAndFolders.bind("<<ListboxSelect>>", self._onListFilesAndFolders)
-        self.lstFilesAndFolders.pack(side=LEFT, fill=BOTH, expand=1)
+        # The two diff-style listboxes containing original and new episode list names
+        frmListBoxes = Frame(self)
+        frmListBoxes.pack(fill=BOTH, expand=1)
 
-    def _onBtnLoadDirectory(self):
+        self.lstOrgFiles = Listbox(frmListBoxes)
+        self.lstOrgFiles.bind("<<ListboxSelect>>", self._onListOrgFiles)
+        self.lstOrgFiles.pack(side=LEFT, fill=BOTH, expand=1, anchor=W)
+
+        self.lstNewFiles = Listbox(frmListBoxes)
+        self.lstNewFiles.bind("<<ListboxSelect>>", self._onListNewFiles)
+        self.lstNewFiles.pack(side=RIGHT, fill=BOTH, expand=1, anchor=E)
+
+        # Bottom buttons
+        frmFinal = Frame(self)
+        frmFinal.pack(side=BOTTOM, anchor=S, fill=X)
+
+        btnRename = Button(frmFinal, text="Rename", command=self._onBtnRename)
+        btnRename.pack(side=LEFT)
+
+        btnExit = Button(frmFinal, text="Exit", command=self._onBtnExit)
+        btnExit.pack(side=RIGHT)
+
+    def _onBtnLoadDir(self):
         selectedDirectory = filedialog.askdirectory()
 
+        self.sLoadDirVar.set(selectedDirectory)
         # Populate listbox
         for item in os.listdir(selectedDirectory):
-            self.lstFilesAndFolders.insert(END, item)
+            self.lstOrgFiles.insert(END, item)
 
     def _onBtnExit(self):
         self._exit()
 
-    def _onListFilesAndFolders(self):
+    def _onListOrgFiles(self):
+        pass
+
+    def _onListNewFiles(self):
+        pass
+
+    def _onBtnRename(self):
         pass
 
     def _onMenuFileExit(self):
