@@ -9,13 +9,16 @@
 """
 
 try:
+    # Try python 3.+ libs
     from tkinter import Tk, Menu, Listbox, Button, filedialog
     from tkinter import END, RIGHT, LEFT, TOP, BOTH, N, W, X
 except (ImportError):
+    # Or python 2.7+ libs
     from Tkinter import Tk, Menu, Listbox, Button, tkFileDialog
     from Tkinter import END, RIGHT, LEFT, TOP, BOTH, N, W, X
 from ttk import Frame, Style
 import os
+import dirmuncher
 
 class Masfir(Frame):
     def __init__(self, parent):
